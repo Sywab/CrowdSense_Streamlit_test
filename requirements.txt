@@ -1,5 +1,3 @@
-requirements to use
-
 streamlit
 pandas
 numpy
