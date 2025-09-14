@@ -1,0 +1,21 @@
+# Ignore virtual environments
+venv/
+env/
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore large/unneeded files
+*.rar
+*.zip
+*.tar
+*.gz
+*.csv
+*.xlsx
+
+# IDE stuff
+.vscode/
+.idea/
