@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CrowdSense</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Redirect to feedback on body click, but exclude admin link
+            document.body.addEventListener('click', function(e) {
+                if (!e.target.closest('.admin-link')) {
+                    window.location.href = "{{ url_for('feedback') }}";
+                }
+            });
+        });
+    </script>
+</head>
+<body class="index-main">
+    <div class="index-container">
+        <h1>Smart Predictions</h1>
+        <!--<p>This page is powered by Python + HTML + CSS.</p>
+        <h2>Upcoming Event: {{ event_name }}</h2> -->
+        <img src="{{ url_for('static', filename='images/crowdsense.png') }}" alt="crowdsenselogo" style="max-width: 300px;">
+        <h1>Safer Commutes</h1>
+        <p><em>press anywhere to continue</em></p>
+        <p><em><a href="{{ url_for('admin_login') }}" class="admin-link" style="color: inherit; text-decoration: underline; cursor: pointer;">Admin Login</a></em></p>
+    </div>
+</body>
+</html>

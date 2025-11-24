@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CrowdSense - Maps & Routes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <header class="main-header">
+    <a href="{{ url_for('home') }}">
+        <img src="{{ url_for('static', filename='images/crowdsense.png') }}" alt="Logo" class="logo">
+    </a>
+    <span class="site-name">CrowdSense</span>
+    <nav class="header-nav">
+        <a href="{{ url_for('dashboard') }}" class="nav-btn"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="{{ url_for('mapsroutes') }}" class="nav-btn"><i class="fas fa-map"></i> Maps & Routes</a>
+        <a href="{{ url_for('analytics') }}" class="nav-btn"><i class="fas fa-chart-line"></i> Analytics</a>
+        <a href="{{ url_for('feedback') }}" class="nav-btn"><i class="fas fa-comment-dots"></i> Feedback</a>
+    </nav>
+</header>
+    <div class="container dashboard-main">
+        <section class="lrt-network-header" style="margin-top:32px;">
+            <h1>Manila Light Rail Tansit Line-2 Network</h1>
+            <p class="dashboard-subtext">Explore the LRT-2 network map and discover alternative transportation options along the same pathway!</p>
+        </section>
+        <section class="lrt-network-map" style="display:flex; justify-content:center; margin-top:24px;">
+            <iframe src="https://www.google.com/maps/d/u/0/embed?mid=1IjdEfJ4yGyBZuanRHZrBUPHTrgHH_g4&ehbc=2E312F&noprof=1" width="640" height="480"></iframe>
+        </section>
+
+        <section class="alt-transport-header" style="margin-top:48px;">
+            <h1>Alternative Modes of Transportation</h1>
+            <p class="dashboard-subtext">
+                When LRT-2 stations are crowded or unavailable, consider these alternative transport options that follow similar routes.
+            </p>
+        </section>
+        <section class="alt-transport-cards">
+            <div class="alt-transport-card">
+                <h2>Jeepney</h2>
+                <img src="{{ url_for('static', filename='images/jeepney1.png') }}" alt="Jeepney" class="alt-transport-photo">
+                <p class="alt-desc">Traditional Filipino public transport, available along major roads parallel to LRT-2.</p>
+                <p><strong>Route:</strong> Recto to Santolan (via Aurora Blvd.)</p>
+                <p><strong>Frequency:</strong> Every 5-10 minutes</p>
+                <p><strong>Fare Rates:</strong> ₱12 - ₱25</p>
+            </div>
+            <div class="alt-transport-card">
+                <h2>UV Express</h2>
+                <img src="{{ url_for('static', filename='images/van1.png') }}" alt="UV Express" class="alt-transport-photo">
+                <p class="alt-desc">Air-conditioned vans with fixed routes, offering a faster and more comfortable ride.</p>
+                <p><strong>Route:</strong> Recto to Pasig / Cubao to Antipolo</p>
+                <p><strong>Frequency:</strong> Every 10-15 minutes</p>
+                <p><strong>Fare Rates:</strong> ₱40 - ₱60</p>
+            </div>
+            <div class="alt-transport-card">
+                <h2>Bus</h2>
+                <img src="{{ url_for('static', filename='images/bus1.png') }}" alt="Bus" class="alt-transport-photo">
+                <p class="alt-desc">City buses run along Marcos Highway and Aurora Blvd., connecting LRT-2 stations and beyond.</p>
+                <p><strong>Route:</strong> Santolan to Recto (via Marcos Highway / Aurora Blvd.)</p>
+                <p><strong>Frequency:</strong> Every 10-20 minutes</p>
+                <p><strong>Fare Rates:</strong> ₱15 - ₱35</p>
+            </div>
+        </section>
+
+    </div>
+    <footer class="main-footer">
+        <div class="footer-title">CrowdSense</div>
+        <div class="footer-tagline">Smart Predictions, Safer Commutes</div>
+    </footer>
+</body>
+</html>

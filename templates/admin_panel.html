@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - CrowdSense</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="main-header">
+    <a href="{{ url_for('home') }}">
+        <img src="{{ url_for('static', filename='images/crowdsense.png') }}" alt="Logo" class="logo">
+    </a>
+    <span class="site-name">CrowdSense</span>
+        </div>
+        <nav class="header-nav">
+            <a href="{{ url_for('admin_logout') }}" class="nav-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </nav>
+    </header>
+
+    <div class="container dashboard-main" style="margin-top: 80px;">
+        <h2><i class="fas fa-upload"></i> Upload CSV Data</h2>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="admin-upload-card">
+            <form method="POST" action="{{ url_for('admin_upload') }}" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="station_name"><i class="fas fa-train"></i> Station Name (optional)</label>
+                    <select id="station_name" name="station_name">
+                        <option value="">-- Select Station or leave blank to use filename --</option>
+                        <option value="recto">Recto</option>
+                        <option value="legarda">Legarda</option>
+                        <option value="pureza">Pureza</option>
+                        <option value="vmapa">V. Mapa</option>
+                        <option value="jruiz">J. Ruiz</option>
+                        <option value="gilmore">Gilmore</option>
+                        <option value="bettygobelmonte">Betty Go-Belmonte</option>
+                        <option value="araneta_cubao">Araneta-Cubao</option>
+                        <option value="anonas">Anonas</option>
+                        <option value="katipunan">Katipunan</option>
+                        <option value="santolan">Santolan</option>
+                        <option value="marikina_pasig">Marikina-Pasig</option>
+                        <option value="antipolo">Antipolo</option>
+                        <option value="LRT_2_Annual_Ridership_2022-2024">Annual Ridership</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="file"><i class="fas fa-file-csv"></i> Select CSV File</label>
+                    <input type="file" id="file" name="file" accept=".csv" required>
+                    <small>File will be appended to existing data if station exists</small>
+                </div>
+                
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-cloud-upload-alt"></i> Upload & Append Data
+                </button>
+            </form>
+        </div>
+
+        <div class="admin-files-card">
+            <h3><i class="fas fa-database"></i> Existing CSV Files</h3>
+            <ul class="file-list">
+                {% if csv_files %}
+                    {% for file in csv_files %}
+                        <li><i class="fas fa-file-csv"></i> {{ file }}</li>
+                    {% endfor %}
+                {% else %}
+                    <li>No CSV files found</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="footer-title">CrowdSense</div>
+        <div class="footer-tagline">Smart Predictions, Safer Commutes</div>
+    </footer>
+</body>
+</html>

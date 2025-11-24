@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CrowdSense - Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <header class="main-header">
+    <a href="{{ url_for('home') }}">
+        <img src="{{ url_for('static', filename='images/crowdsense.png') }}" alt="Logo" class="logo">
+    </a>
+    <span class="site-name">CrowdSense</span>
+    <nav class="header-nav">
+        <a href="{{ url_for('dashboard') }}" class="nav-btn"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="{{ url_for('mapsroutes') }}" class="nav-btn"><i class="fas fa-map"></i> Maps & Routes</a>
+        <a href="{{ url_for('analytics') }}" class="nav-btn"><i class="fas fa-chart-line"></i> Analytics</a>
+        <a href="{{ url_for('feedback') }}" class="nav-btn"><i class="fas fa-comment-dots"></i> Feedback</a>
+    </nav>
+</header>
+    <div class="container dashboard-main">
+        <section class="dashboard-header">
+            <h1>Dashboard Overview</h1>
+            <p class="dashboard-subtext">Crowd density monitoring for LRT Line-2 stations. Updated daily!</p>
+        </section>
+        <section class="dashboard-cards">
+            <div class="dashboard-card">
+                <h2>Total Stations</h2>
+                <h1>13 Stations</h1>
+                <p>Stations of the Manila Light Rail Transit Line-2</p>
+                <p><em>Know your location</em></p>
+            </div>
+    <div class="dashboard-card">
+    <h2>High Density Stations</h2>
+    {% set vh = very_high_count|default(0) %}
+    {% set c = critical_count|default(0) %}
+    {% set total_above_high = vh + c %}
+    <h1>
+        {% if total_above_high > 0 %}
+            <strong>{{ total_above_high }} Stations</strong>
+        {% else %}
+            <strong>0 Stations</strong>
+        {% endif %}
+    </h1>
+    <p>Recorded Stations Above 500 Peak Density Value</p>
+    <p><em>See the busiest station</em></p>
+</div>
+            <div class="dashboard-card">
+                <h2>Average Density</h2>
+                {% if average_density_all is defined and average_density_all is not none %}
+                    <h1>{{ average_density_all|round(2) }}</h1>
+                {% else %}
+                    <h1>N/A</h1>
+                {% endif %}
+                <p>Average Peak Density of all LRT-2 Stations</p>
+                <p><em>Plan your commute</em></p>
+            </div>
+            <div class="dashboard-card">
+                <h2>Peak Hours</h2>
+                {% if most_common_peak_block_pretty is defined and most_common_peak_block_pretty %}
+                    <h1>{{ most_common_peak_block_pretty }}</h1>
+                    <p>{{ most_common_peak_block_count }} Stations Peaked in this Time Block</p>
+                {% else %}
+                    <h1>N/A</h1>
+                    <p>No peak data available</p>
+                {% endif %}
+                <p><em>Plan your commute</em></p>
+            </div>
+        </section>
+
+        <section class="station-density-header" style="margin-top:48px;">
+            <h1>Station Crowd Density</h1>
+            <p class="dashboard-subtext">Detailed crowd density patterns and predictions</p>
+        <section class="station-density-cards">
+
+<!-- Recto -->
+<div class="station-density-card">
+    <h2>Recto Terminal Station Prediction</h2>
+    <div class="density-info-row">
+        <div class="density-info-col">
+            <p><strong>Date:</strong> {{ now.strftime('%B %d, %Y') }} - {{ recto_today_short }}</p>
+            {% if recto_today is not none %}
+                <p><strong>Peak Hour Block:</strong> {{ recto_peak_block_per_hour }}</p>
+                {% if recto_avg_density is not none %}
+                    <p><strong>Peak Density Value:</strong> {{ recto_peak_density_per_hour|round(2) }}</p>
+                {% else %}
+                    <p><strong>Peak Density Value:</strong> N/A</p>
+                {% endif %}
+            {% else %}
+                <p><strong>Predicted Peak Hour Block:</strong> N/A</p>
+                <p><strong>Peak Density Value:</strong> N/A</p>
+            {% endif %}
+        </div>
+
+        <div class="density-info-col" style="text-align:left;">
+            {% if recto_peak_density_per_hour is not none %}
+                {% if recto_peak_density_per_hour < 500 %}
+                    <p><strong><span style="color: green;">Low Density</span></strong></p>
+                    <p><em>Free Movement</em></p>
+                    <p><em>Comfortable Spacing</em></p>
+                {% elif recto_peak_density_per_hour < 750 %}
+                    <p><strong><span style="color: greenyellow;">Moderate Density</span></strong></p>
+                    <p><em>Some Crowding</em></p>
+                    <p><em>Movement Still Possible</em></p>
+                {% elif recto_peak_density_per_hour < 1000 %}
+                    <p><strong><span style="color: orange;">High Density</span></strong></p>
+                    <p><em>Limited Movement</em></p>
+                    <p><em>Noticeable Congestion</em></p>
+                {% elif recto_peak_density_per_hour < 1250 %}
+                    <p><strong><span style="color: red;">Very High Density</span></strong></p>
+                    <p><em>Restricted Movement</em></p>
+                    <p><em>Risk of Discomfort</em></p>
+                {% else %}
+                    <p><strong><span style="color: darkred;">Critical Density</span></strong></p>
+                    <p><em>Severe Overcrowding</em></p>
+                    <p><em>Risk of Stampede</em></p>
+                {% endif %}
+        {% endif %}
+        </div>
+    </div>
+    <img src="{{ url_for('static', filename='images/recto_predicted_bar.png') }}" alt="Recto Station Prediction Graph" class="density-graph">
+</div>
+
+<!-- Legarda -->
+<div class="station-density-card">
+    <h2>Legarda Station Prediction</h2>
+    <div class="density-info-row">
+        <div class="density-info-col">
+            <p><strong>Date:</strong> {{ now.strftime('%B %d, %Y') }} - {{ legarda_today_short }}</p>
+            {% if legarda_today is not none %}
+                <p><strong>Peak Hour Block:</strong> {{ legarda_peak_block_per_hour }}</p>
+                {% if legarda_avg_density is not none %}
+                    <p><strong>Peak Density Value:</strong> {{ legarda_peak_density_per_hour|round(2) }}</p>
+                {% else %}
+                    <p><strong>Peak Density Value:</strong> N/A</p>
+                {% endif %}
+            {% else %}
+                <p><strong>Predicted Peak Hour Block:</strong> N/A</p>
+                <p><strong>Peak Density Value:</strong> N/A</p>
+            {% endif %}
+        </div>
+        <div class="density-info-col" style="text-align:left;">
+            {% if legarda_peak_density_per_hour is not none %}
+                {% if legarda_peak_density_per_hour < 500 %}
+                    <p><strong><span style="color: green;">Low Density</span></strong></p>
+                    <p><em>Free Movement</em></p>
+                    <p><em>Comfortable Spacing</em></p>
+                {% elif legarda_peak_density_per_hour < 750 %}
+                    <p><strong><span style="color: greenyellow;">Moderate Density</span></strong></p>
+                    <p><em>Some Crowding</em></p>
+                    <p><em>Movement Still Possible</em></p>
+                {% elif legarda_peak_density_per_hour < 1000 %}
+                    <p><strong><span style="color: orange;">High Density</span></strong></p>
+                    <p><em>Limited Movement</em></p>
+                    <p><em>Noticeable Congestion</em></p>
+                {% elif legarda_peak_density_per_hour < 1250 %}
+                    <p><strong><span style="color: red;">Very High Density</span></strong></p>
+                    <p><em>Restricted Movement</em></p>
+                    <p><em>Risk of Discomfort</em></p>
+                {% else %}
+                    <p><strong><span style="color: darkred;">Critical Density</span></strong></p>
+                    <p><em>Severe Overcrowding</em></p>
+                    <p><em>Risk of Stampede</em></p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <img src="{{ url_for('static', filename='images/legarda_predicted_bar.png') }}" alt="Legarda Station Prediction Graph" class="density-graph">
+</div>
+</section>
+ <section class="station-density-cards">
+
+    <!-- Pureza -->
+<div class="station-density-card">
+    <h2>Pureza Station Prediction</h2>
+    <div class="density-info-row">
+        <div class="density-info-col">
+            <p><strong>Date:</strong> {{ now.strftime('%B %d, %Y') }} - {{ pureza_today_short }}</p>
+            {% if pureza_today is not none %}
+                <p><strong>Peak Hour Block:</strong> {{ pureza_peak_block_per_hour }}</p>
+                {% if pureza_avg_density is not none %}
+                    <p><strong>Peak Density Value:</strong> {{ pureza_peak_density_per_hour|round(2) }}</p>
+                {% else %}
+                    <p><strong>Peak Density Value:</strong> N/A</p>
+                {% endif %}
+            {% else %}
+                <p><strong>Predicted Peak Hour Block:</strong> N/A</p>
+                <p><strong>Peak Density Value:</strong> N/A</p>
+            {% endif %}
+        </div>
+
+        <div class="density-info-col" style="text-align:left;">
+            {% if pureza_peak_density_per_hour is not none %}
+                {% if pureza_peak_density_per_hour < 500 %}
+                    <p><strong><span style="color: green;">Low Density</span></strong></p>
+                    <p><em>Free Movement</em></p>
+                    <p><em>Comfortable Spacing</em></p>
+                {% elif pureza_peak_density_per_hour < 750 %}
+                    <p><strong><span style="color: #30BCB1;">Moderate Density</span></strong></p>
+                    <p><em>Some Crowding</em></p>
+                    <p><em>Movement Still Possible</em></p>
+                {% elif pureza_peak_density_per_hour < 1000 %}
+                    <p><strong><span style="color: orange;">High Density</span></strong></p>
+                    <p><em>Limited Movement</em></p>
+                    <p><em>Noticeable Congestion</em></p>
+                {% elif pureza_peak_density_per_hour < 1250 %}
+                    <p><strong><span style="color: red;">Very High Density</span></strong></p>
+                    <p><em>Restricted Movement</em></p>
+                    <p><em>Risk of Discomfort</em></p>
+                {% else %}
+                    <p><strong><span style="color: darkred;">Critical Density</span></strong></p>
+                    <p><em>Severe Overcrowding</em></p>
+                    <p><em>Risk of Stampede</em></p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <img src="{{ url_for('static', filename='images/pureza_predicted_bar.png') }}" alt="Pureza Station Prediction Graph" class="density-graph">
+</div>
+
+<!-- V. Mapa -->
+<div class="station-density-card">
+    <h2>V. Mapa Station Prediction</h2>
+    <div class="density-info-row">
+        <div class="density-info-col">
+            <p><strong>Date:</strong> {{ now.strftime('%B %d, %Y') }} - {{ vmapa_today_short }}</p>
+            {% if vmapa_today is not none %}
+                <p><strong>Peak Hour Block:</strong> {{ vmapa_peak_block_per_hour }}</p>
+                {% if vmapa_avg_density is not none %}
+                    <p><strong>Peak Density Value:</strong> {{ vmapa_peak_density_per_hour|round(2) }}</p>
+                {% else %}
+                    <p><strong>Peak Density Value:</strong> N/A</p>
+                {% endif %}
+            {% else %}
+                <p><strong>Predicted Peak Hour Block:</strong> N/A</p>
+                <p><strong>Peak Density Value:</strong> N/A</p>
+            {% endif %}
+        </div>
+
+        <div class="density-info-col" style="text-align:left;">
+            {% if vmapa_peak_density_per_hour is not none %}
+                {% if vmapa_peak_density_per_hour < 500 %}
+                    <p><strong><span style="color: green;">Low Density</span></strong></p>
+                    <p><em>Free Movement</em></p>
+                    <p><em>Comfortable Spacing</em></p>
+                {% elif vmapa_peak_density_per_hour < 750 %}
+                    <p><strong><span style="color: #30BCB1;">Moderate Density</span></strong></p>
+                    <p><em>Some Crowding</em></p>
+                    <p><em>Movement Still Possible</em></p>
+                {% elif vmapa_peak_density_per_hour < 1000 %}
+                    <p><strong><span style="color: orange;">High Density</span></strong></p>
+                    <p><em>Limited Movement</em></p>
+                    <p><em>Noticeable Congestion</em></p>
+                {% elif vmapa_peak_density_per_hour < 1250 %}
+                    <p><strong><span style="color: red;">Very High Density</span></strong></p>
+                    <p><em>Restricted Movement</em></p>
+                    <p><em>Risk of Discomfort</em></p>
+                {% else %}
+                    <p><strong><span style="color: darkred;">Critical Density</span></strong></p>
+                    <p><em>Severe Overcrowding</em></p>
+                    <p><em>Risk of Stampede</em></p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <img src="{{ url_for('static', filename='images/vmapa_predicted_bar.png') }}" alt="V. Mapa Station Prediction Graph" class="density-graph">
+</div>
+        </section>
+<section class="station-density-cards">
+<!-- J. Ruiz -->
+    <div class="station-density-card">
+    <h2>J. Ruiz Station Prediction</h2>
+    <div class="density-info-row">
+        <div class="density-info-col">
+            <p><strong>Date:</strong> {{ now.strftime('%B %d, %Y') }} - {{ jruiz_today_short }}</p>
+            {% if jruiz_today is not none %}
+                <p><strong>Peak Hour Block:</strong> {{ jruiz_peak_block_per_hour }}</p>
+                {% if jruiz_avg_density is not none %}
+                    <p><strong>Peak Density Value:</strong> {{ jruiz_peak_density_per_hour|round(2) }}</p>
+                {% else %}
+                    <p><strong>Peak Density Value:</strong> N/A</p>
+                {% endif %}
+            {% else %}
+                <p><strong>Predicted Peak Hour Block:</strong> N/A</p>
+                <p><strong>Peak Density Value:</strong> N/A</p>
+            {% endif %}
+        </div>
+
+        <div class="density-info-col" style="text-align:left;">
+            {% if jruiz_peak_density_per_hour is not none %}
+                {% if jruiz_peak_density_per_hour < 500 %}
+                    <p><strong><span style="color: green;">Low Density</span></strong></p>
+                    <p><em>Free Movement</em></p>
+                    <p><em>Comfortable Spacing</em></p>
+                {% elif jruiz_peak_density_per_hour < 750 %}
+                    <p><strong><span style="color: #30BCB1;">Moderate Density</span></strong></p>
+                    <p><em>Some Crowding</em></p>
+                    <p><em>Movement Still Possible</em></p>
+                {% elif jruiz_peak_density_per_hour < 1000 %}
+                    <p><strong><span style="color: orange;">High Density</span></strong></p>
+                    <p><em>Limited Movement</em></p>
+                    <p><em>Noticeable Congestion</em></p>
+                {% elif jruiz_peak_density_per_hour < 1250 %}
+                    <p><strong><span style="color: red;">Very High Density</span></strong></p>
+                    <p><em>Restricted Movement</em></p>
+                    <p><em>Risk of Discomfort</em></p>
+                {% else %}
+                    <p><strong><span style="color: darkred;">Critical Density</span></strong></p>
+                    <p><em>Severe Overcrowding</em></p>
+                    <p><em>Risk of Stampede</em></p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <img src="{{ url_for('static', filename='images/jruiz_predicted_bar.png') }}" alt="J. Ruiz Station Prediction Graph" class="density-graph">
+</div>
+<!-- Gilmore -->
+    <div class="station-density-card">
+    <h2>Gilmore Station Prediction</h2>
+    <div class="density-info-row">
+        <div class="density-info-col">
+            <p><strong>Date:</strong> {{ now.strftime('%B %d, %Y') }} - {{ gilmore_today_short }}</p>
+            {% if gilmore_today is not none %}
+                <p><strong>Peak Hour Block:</strong> {{ gilmore_peak_block_per_hour }}</p>
+                {% if gilmore_avg_density is not none %}
+                    <p><strong>Peak Density Value:</strong> {{ gilmore_peak_density_per_hour|round(2) }}</p>
+                {% else %}
+                    <p><strong>Peak Density Value:</strong> N/A</p>
+                {% endif %}
+            {% else %}
+                <p><strong>Predicted Peak Hour Block:</strong> N/A</p>
+                <p><strong>Peak Density Value:</strong> N/A</p>
+            {% endif %}
+        </div>
+
+        <div class="density-info-col" style="text-align:left;">
+            {% if gilmore_peak_density_per_hour is not none %}
+                {% if gilmore_peak_density_per_hour < 500 %}
+                    <p><strong><span style="color: green;">Low Density</span></strong></p>
+                    <p><em>Free Movement</em></p>
+                    <p><em>Comfortable Spacing</em></p>
+                {% elif gilmore_peak_density_per_hour < 750 %}
+                    <p><strong><span style="color: #30BCB1;">Moderate Density</span></strong></p>
+                    <p><em>Some Crowding</em></p>
+                    <p><em>Movement Still Possible</em></p>
+                {% elif gilmore_peak_density_per_hour < 1000 %}
+                    <p><strong><span style="color: orange;">High Density</span></strong></p>
+                    <p><em>Limited Movement</em></p>
+                    <p><em>Noticeable Congestion</em></p>
+                {% elif gilmore_peak_density_per_hour < 1250 %}
+                    <p><strong><span style="color: red;">Very High Density</span></strong></p>
+                    <p><em>Restricted Movement</em></p>
+                    <p><em>Risk of Discomfort</em></p>
+                {% else %}
+                    <p><strong><span style="color: darkred;">Critical Density</span></strong></p>
+                    <p><em>Severe Overcrowding</em></p>
+                    <p><em>Risk of Stampede</em></p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <img src="{{ url_for('static', filename='images/gilmore_predicted_bar.png') }}" alt="Gilmore Station Prediction Graph" class="density-graph">
+</div>
+</section>
+ <section class="station-density-cards">
+<!-- Betty Go-Belmonte -->
+    <div class="station-density-card">
+    <h2>Betty Go-Belmonte Station Prediction</h2>
+    <div class="density-info-row">
+        <div class="density-info-col">
+            <p><strong>Date:</strong> {{ now.strftime('%B %d, %Y') }} - {{ bettygobelmonte_today_short }}</p>
+            {% if bettygobelmonte_today is not none %}
+                <p><strong>Peak Hour Block:</strong> {{ bettygobelmonte_peak_block_per_hour }}</p>
+                {% if bettygobelmonte_avg_density is not none %}
+                    <p><strong>Peak Density Value:</strong> {{ bettygobelmonte_peak_density_per_hour|round(2) }}</p>
+                {% else %}
+                    <p><strong>Peak Density Value:</strong> N/A</p>
+                {% endif %}
+            {% else %}
+                <p><strong>Predicted Peak Hour Block:</strong> N/A</p>
+                <p><strong>Peak Density Value:</strong> N/A</p>
+            {% endif %}
+        </div>
+
+        <div class="density-info-col" style="text-align:left;">
+            {% if bettygobelmonte_peak_density_per_hour is not none %}
+                {% if bettygobelmonte_peak_density_per_hour < 500 %}
+                    <p><strong><span style="color: green;">Low Density</span></strong></p>
+                    <p><em>Free Movement</em></p>
+                    <p><em>Comfortable Spacing</em></p>
+                {% elif bettygobelmonte_peak_density_per_hour < 750 %}
+                    <p><strong><span style="color: #30BCB1;">Moderate Density</span></strong></p>
+                    <p><em>Some Crowding</em></p>
+                    <p><em>Movement Still Possible</em></p>
+                {% elif bettygobelmonte_peak_density_per_hour < 1000 %}
+                    <p><strong><span style="color: orange;">High Density</span></strong></p>
+                    <p><em>Limited Movement</em></p>
+                    <p><em>Noticeable Congestion</em></p>
+                {% elif bettygobelmonte_peak_density_per_hour < 1250 %}
+                    <p><strong><span style="color: red;">Very High Density</span></strong></p>
+                    <p><em>Restricted Movement</em></p>
+                    <p><em>Risk of Discomfort</em></p>
+                {% else %}
+                    <p><strong><span style="color: darkred;">Critical Density</span></strong></p>
+                    <p><em>Severe Overcrowding</em></p>
+                    <p><em>Risk of Stampede</em></p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <img src="{{ url_for('static', filename='images/betty_go_belmonte_predicted_bar.png') }}" alt="J. Ruiz Station Prediction Graph" class="density-graph">
+</div>
+<!-- Araneta - Cubao -->
+            <div class="station-density-card">
+    <h2>Araneta Center - Cubao Terminal Station Prediction</h2>
+    <div class="density-info-row">
+        <div class="density-info-col">
+            <p><strong>Date:</strong> {{ now.strftime('%B %d, %Y') }} - {{ araneta_cubao_today_short }}</p>
+            {% if araneta_cubao_today is not none %}
+                <p><strong>Peak Hour Block:</strong> {{ araneta_cubao_peak_block_per_hour }}</p>
+                {% if araneta_cubao_avg_density is not none %}
+                    <p><strong>Peak Density Value:</strong> {{ araneta_cubao_peak_density_per_hour|round(2) }}</p>
+                {% else %}
+                    <p><strong>Peak Density Value:</strong> N/A</p>
+                {% endif %}
+            {% else %}
+                <p><strong>Predicted Peak Hour Block:</strong> N/A</p>
+                <p><strong>Peak Density Value:</strong> N/A</p>
+            {% endif %}
+        </div>
+
+        <div class="density-info-col" style="text-align:left;">
+            {% if araneta_cubao_peak_density_per_hour is not none %}
+                {% if araneta_cubao_peak_density_per_hour < 500 %}
+                    <p><strong><span style="color: green;">Low Density</span></strong></p>
+                    <p><em>Free Movement</em></p>
+                    <p><em>Comfortable Spacing</em></p>
+                {% elif araneta_cubao_peak_density_per_hour < 750 %}
+                    <p><strong><span style="color: #30BCB1;">Moderate Density</span></strong></p>
+                    <p><em>Some Crowding</em></p>
+                    <p><em>Movement Still Possible</em></p>
+                {% elif araneta_cubao_peak_density_per_hour < 1000 %}
+                    <p><strong><span style="color: orange;">High Density</span></strong></p>
+                    <p><em>Limited Movement</em></p>
+                    <p><em>Noticeable Congestion</em></p>
+                {% elif araneta_cubao_peak_density_per_hour < 1250 %}
+                    <p><strong><span style="color: red;">Very High Density</span></strong></p>
+                    <p><em>Restricted Movement</em></p>
+                    <p><em>Risk of Discomfort</em></p>
+                {% else %}
+                    <p><strong><span style="color: darkred;">Critical Density</span></strong></p>
+                    <p><em>Severe Overcrowding</em></p>
+                    <p><em>Risk of Stampede</em></p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <img src="{{ url_for('static', filename='images/araneta_cubao_terminal_predicted_bar.png') }}" alt="Araneta Center - Cubao Terminal Station Prediction Graph" class="density-graph">
+</div>
+        </section>
+        <section class="station-density-cards">
+<!-- Anonas-->
+    <div class="station-density-card">
+    <h2>Anonas Station Prediction</h2>
+    <div class="density-info-row">
+        <div class="density-info-col">
+            <p><strong>Date:</strong> {{ now.strftime('%B %d, %Y') }} - {{ anonas_today_short }}</p>
+            {% if anonas_today is not none %}
+                <p><strong>Peak Hour Block:</strong> {{ anonas_peak_block_per_hour }}</p>
+                {% if anonas_avg_density is not none %}
+                    <p><strong>Peak Density Value:</strong> {{ anonas_peak_density_per_hour|round(2) }}</p>
+                {% else %}
+                    <p><strong>Peak Density Value:</strong> N/A</p>
+                {% endif %}
+            {% else %}
+                <p><strong>Predicted Peak Hour Block:</strong> N/A</p>
+                <p><strong>Peak Density Value:</strong> N/A</p>
+            {% endif %}
+        </div>
+
+        <div class="density-info-col" style="text-align:left;">
+            {% if anonas_peak_density_per_hour is not none %}
+                {% if anonas_peak_density_per_hour < 500 %}
+                    <p><strong><span style="color: green;">Low Density</span></strong></p>
+                    <p><em>Free Movement</em></p>
+                    <p><em>Comfortable Spacing</em></p>
+                {% elif anonas_peak_density_per_hour < 750 %}
+                    <p><strong><span style="color: #30BCB1;">Moderate Density</span></strong></p>
+                    <p><em>Some Crowding</em></p>
+                    <p><em>Movement Still Possible</em></p>
+                {% elif anonas_peak_density_per_hour < 1000 %}
+                    <p><strong><span style="color: orange;">High Density</span></strong></p>
+                    <p><em>Limited Movement</em></p>
+                    <p><em>Noticeable Congestion</em></p>
+                {% elif anonas_peak_density_per_hour < 1250 %}
+                    <p><strong><span style="color: red;">Very High Density</span></strong></p>
+                    <p><em>Restricted Movement</em></p>
+                    <p><em>Risk of Discomfort</em></p>
+                {% else %}
+                    <p><strong><span style="color: darkred;">Critical Density</span></strong></p>
+                    <p><em>Severe Overcrowding</em></p>
+                    <p><em>Risk of Stampede</em></p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <img src="{{ url_for('static', filename='images/anonas_predicted_bar.png') }}" alt="Anonas Station Prediction Graph" class="density-graph">
+</div>
+<!-- Katipunan-->
+    <div class="station-density-card">
+    <h2>Katipunan Station Prediction</h2>
+    <div class="density-info-row">
+        <div class="density-info-col">
+            <p><strong>Date:</strong> {{ now.strftime('%B %d, %Y') }} - {{ katipunan_today_short }}</p>
+            {% if katipunan_today is not none %}
+                <p><strong>Peak Hour Block:</strong> {{ katipunan_peak_block_per_hour }}</p>
+                {% if katipunan_avg_density is not none %}
+                    <p><strong>Peak Density Value:</strong> {{ katipunan_peak_density_per_hour|round(2) }}</p>
+                {% else %}
+                    <p><strong>Peak Density Value:</strong> N/A</p>
+                {% endif %}
+            {% else %}
+                <p><strong>Predicted Peak Hour Block:</strong> N/A</p>
+                <p><strong>Peak Density Value:</strong> N/A</p>
+            {% endif %}
+        </div>
+
+        <div class="density-info-col" style="text-align:left;">
+            {% if katipunan_peak_density_per_hour is not none %}
+                {% if katipunan_peak_density_per_hour < 500 %}
+                    <p><strong><span style="color: green;">Low Density</span></strong></p>
+                    <p><em>Free Movement</em></p>
+                    <p><em>Comfortable Spacing</em></p>
+                {% elif katipunan_peak_density_per_hour < 750 %}
+                    <p><strong><span style="color: #30BCB1;">Moderate Density</span></strong></p>
+                    <p><em>Some Crowding</em></p>
+                    <p><em>Movement Still Possible</em></p>
+                {% elif katipunan_peak_density_per_hour < 1000 %}
+                    <p><strong><span style="color: orange;">High Density</span></strong></p>
+                    <p><em>Limited Movement</em></p>
+                    <p><em>Noticeable Congestion</em></p>
+                {% elif katipunan_peak_density_per_hour < 1250 %}
+                    <p><strong><span style="color: red;">Very High Density</span></strong></p>
+                    <p><em>Restricted Movement</em></p>
+                    <p><em>Risk of Discomfort</em></p>
+                {% else %}
+                    <p><strong><span style="color: darkred;">Critical Density</span></strong></p>
+                    <p><em>Severe Overcrowding</em></p>
+                    <p><em>Risk of Stampede</em></p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <img src="{{ url_for('static', filename='images/katipunan_predicted_bar.png') }}" alt="Katipunan Station Prediction Graph" class="density-graph">
+</div>
+</section>
+ <section class="station-density-cards">
+<!-- Santolan -->
+            <div class="station-density-card">
+    <h2>Santolan Station Prediction</h2>
+    <div class="density-info-row">
+        <div class="density-info-col">
+            <p><strong>Date:</strong> {{ now.strftime('%B %d, %Y') }} - {{ santolan_today_short }}</p>
+            {% if santolan_today is not none %}
+                <p><strong>Peak Hour Block:</strong> {{ santolan_peak_block_per_hour }}</p>
+                {% if santolan_avg_density is not none %}
+                    <p><strong>Peak Density Value:</strong> {{ santolan_peak_density_per_hour|round(2) }}</p>
+                {% else %}
+                    <p><strong>Peak Density Value:</strong> N/A</p>
+                {% endif %}
+            {% else %}
+                <p><strong>Predicted Peak Hour Block:</strong> N/A</p>
+                <p><strong>Peak Density Value:</strong> N/A</p>
+            {% endif %}
+        </div>
+
+        <div class="density-info-col" style="text-align:left;">
+            {% if santolan_peak_density_per_hour is not none %}
+                {% if santolan_peak_density_per_hour < 500 %}
+                    <p><strong><span style="color: green;">Low Density</span></strong></p>
+                    <p><em>Free Movement</em></p>
+                    <p><em>Comfortable Spacing</em></p>
+                {% elif santolan_peak_density_per_hour < 750 %}
+                    <p><strong><span style="color: #30BCB1;">Moderate Density</span></strong></p>
+                    <p><em>Some Crowding</em></p>
+                    <p><em>Movement Still Possible</em></p>
+                {% elif santolan_peak_density_per_hour < 1000 %}
+                    <p><strong><span style="color: orange;">High Density</span></strong></p>
+                    <p><em>Limited Movement</em></p>
+                    <p><em>Noticeable Congestion</em></p>
+                {% elif santolan_peak_density_per_hour < 1250 %}
+                    <p><strong><span style="color: red;">Very High Density</span></strong></p>
+                    <p><em>Restricted Movement</em></p>
+                    <p><em>Risk of Discomfort</em></p>
+                {% else %}
+                    <p><strong><span style="color: darkred;">Critical Density</span></strong></p>
+                    <p><em>Severe Overcrowding</em></p>
+                    <p><em>Risk of Stampede</em></p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <img src="{{ url_for('static', filename='images/santolan_predicted_bar.png') }}" alt="Santolan Station Prediction Graph" class="density-graph">
+</div>
+<!-- Marikina - Pasig -->
+            <div class="station-density-card">
+    <h2>Marikina - Pasig Station Prediction</h2>
+    <div class="density-info-row">
+        <div class="density-info-col">
+            <p><strong>Date:</strong> {{ now.strftime('%B %d, %Y') }} - {{ marikina_pasig_today_short }}</p>
+            {% if marikina_pasig_today is not none %}
+                <p><strong>Peak Hour Block:</strong> {{ marikina_pasig_peak_block_per_hour }}</p>
+                {% if marikina_pasig_avg_density is not none %}
+                    <p><strong>Peak Density Value:</strong> {{ marikina_pasig_peak_density_per_hour|round(2) }}</p>
+                {% else %}
+                    <p><strong>Peak Density Value:</strong> N/A</p>
+                {% endif %}
+            {% else %}
+                <p><strong>Predicted Peak Hour Block:</strong> N/A</p>
+                <p><strong>Peak Density Value:</strong> N/A</p>
+            {% endif %}
+        </div>
+
+        <div class="density-info-col" style="text-align:left;">
+            {% if marikina_pasig_peak_density_per_hour is not none %}
+                {% if marikina_pasig_peak_density_per_hour < 500 %}
+                    <p><strong><span style="color: green;">Low Density</span></strong></p>
+                    <p><em>Free Movement</em></p>
+                    <p><em>Comfortable Spacing</em></p>
+                {% elif marikina_pasig_peak_density_per_hour < 750 %}
+                    <p><strong><span style="color: #30BCB1;">Moderate Density</span></strong></p>
+                    <p><em>Some Crowding</em></p>
+                    <p><em>Movement Still Possible</em></p>
+                {% elif marikina_pasig_peak_density_per_hour < 1000 %}
+                    <p><strong><span style="color: orange;">High Density</span></strong></p>
+                    <p><em>Limited Movement</em></p>
+                    <p><em>Noticeable Congestion</em></p>
+                {% elif marikina_pasig_peak_density_per_hour < 1250 %}
+                    <p><strong><span style="color: red;">Very High Density</span></strong></p>
+                    <p><em>Restricted Movement</em></p>
+                    <p><em>Risk of Discomfort</em></p>
+                {% else %}
+                    <p><strong><span style="color: darkred;">Critical Density</span></strong></p>
+                    <p><em>Severe Overcrowding</em></p>
+                    <p><em>Risk of Stampede</em></p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <img src="{{ url_for('static', filename='images/marikina_pasig_predicted_bar.png') }}" alt="Marikina - Pasig Station Prediction Graph" class="density-graph">
+</div>
+        </section>
+        <section class="station-density-cards">
+<!-- Antipolo -->
+            <div class="station-density-card">
+    <h2>Antipolo Station Prediction</h2>
+    <div class="density-info-row">
+        <div class="density-info-col">
+            <p><strong>Date:</strong> {{ now.strftime('%B %d, %Y') }} - {{ antipolo_today_short }}</p>
+            {% if antipolo_today is not none %}
+                <p><strong>Peak Hour Block:</strong> {{ antipolo_peak_block_per_hour }}</p>
+                {% if antipolo_avg_density is not none %}
+                    <p><strong>Peak Density Value:</strong> {{ antipolo_peak_density_per_hour|round(2) }}</p>
+                {% else %}
+                    <p><strong>Peak Density Value:</strong> N/A</p>
+                {% endif %}
+            {% else %}
+                <p><strong>Predicted Peak Hour Block:</strong> N/A</p>
+                <p><strong>Peak Density Value:</strong> N/A</p>
+            {% endif %}
+        </div>
+
+        <div class="density-info-col" style="text-align:left;">
+            {% if antipolo_peak_density_per_hour is not none %}
+                {% if antipolo_peak_density_per_hour < 500 %}
+                    <p><strong><span style="color: green;">Low Density</span></strong></p>
+                    <p><em>Free Movement</em></p>
+                    <p><em>Comfortable Spacing</em></p>
+                {% elif antipolo_peak_density_per_hour < 750 %}
+                    <p><strong><span style="color: #30BCB1;">Moderate Density</span></strong></p>
+                    <p><em>Some Crowding</em></p>
+                    <p><em>Movement Still Possible</em></p>
+                {% elif antipolo_peak_density_per_hour < 1000 %}
+                    <p><strong><span style="color: orange;">High Density</span></strong></p>
+                    <p><em>Limited Movement</em></p>
+                    <p><em>Noticeable Congestion</em></p>
+                {% elif antipolo_peak_density_per_hour < 1250 %}
+                    <p><strong><span style="color: red;">Very High Density</span></strong></p>
+                    <p><em>Restricted Movement</em></p>
+                    <p><em>Risk of Discomfort</em></p>
+                {% else %}
+                    <p><strong><span style="color: darkred;">Critical Density</span></strong></p>
+                    <p><em>Severe Overcrowding</em></p>
+                    <p><em>Risk of Stampede</em></p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <img src="{{ url_for('static', filename='images/antipolo_predicted_bar.png') }}" alt="Antipolo Station Prediction Graph" class="density-graph">
+</div>
+        </section>
+    </div>
+    <footer class="main-footer">
+        <div class="footer-title">CrowdSense</div>
+        <div class="footer-tagline">Smart Predictions, Safer Commutes</div>
+    </footer>
+</body>
+</html>

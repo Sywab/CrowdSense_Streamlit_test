@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CrowdSense - Analytics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <header class="main-header">
+    <a href="{{ url_for('home') }}">
+        <img src="{{ url_for('static', filename='images/crowdsense.png') }}" alt="Logo" class="logo">
+    </a>
+    <span class="site-name">CrowdSense</span>
+    <nav class="header-nav">
+        <a href="{{ url_for('dashboard') }}" class="nav-btn"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="{{ url_for('mapsroutes') }}" class="nav-btn"><i class="fas fa-map"></i> Maps & Routes</a>
+        <a href="{{ url_for('analytics') }}" class="nav-btn"><i class="fas fa-chart-line"></i> Analytics</a>
+        <a href="{{ url_for('feedback') }}" class="nav-btn"><i class="fas fa-comment-dots"></i> Feedback</a>
+    </nav>
+</header>
+    <div class="container dashboard-main">
+        <section class="analytics-header" style="margin-top:32px;">
+            <h1>Analytics & Trends</h1>
+            <p class="dashboard-subtext">
+                Comprehensive analysis of LRT crowd density patterns, trends, and historical comparisons.
+            </p>
+        </section>
+        <section class="analytics-cards">
+            <!--<div class="analytics-card">
+                <h2>Weekly Change</h2>
+                <p><span style="color: red;">+8.2%</span></p>
+                <p>Weekly density compared to the previous week.</p>
+            </div>-->
+            <div class="analytics-card">
+                <h2>Monthly Change</h2>
+                {% if monthly_pct_change is defined and monthly_pct_change is not none %}
+                    {% if monthly_pct_change >= 0 %}
+                        <h1>+{{ monthly_pct_change }}%</h1>
+                    {% else %}
+                        <h1>{{ monthly_pct_change }}%</h1>
+                    {% endif %}
+                {% else %}
+                    <h1>N/A</h1>
+                {% endif %}
+                <p>Average monthly change in 2024 ridership.</p>
+            </div>
+            <div class="analytics-card">
+                <h2>Yearly Change</h2>
+                {% if yearly_pct_change is defined and yearly_pct_change is not none %}
+                    {% if yearly_pct_change >= 0 %}
+                        <h1>+{{ yearly_pct_change }}%</h1>
+                    {% else %}
+                        <h1>{{ yearly_pct_change }}%</h1>
+                    {% endif %}
+                {% else %}
+                    <h1>N/A</h1>
+                {% endif %}
+                <p>Yearly density compared to the previous year.</p>
+            </div>
+            <div class="analytics-card">
+                <h2>Peak Hour</h2>
+                {% if most_common_peak_block_pretty is defined and most_common_peak_block_pretty %}
+                    <h1>{{ most_common_peak_block_pretty }}</h1>
+                {% else %}
+                    <h1>N/A</h1>
+                {% endif %}
+                <p>Time period with the consistently highest recorded density.</p>
+            </div>
+            <div class="analytics-card">
+                <h2>Busiest Station</h2>
+                {% if busiest_station_name is defined and busiest_station_name %}
+                    <h1>{{ busiest_station_name }}</h1>
+                {% else %}
+                    <h1>N/A</h1>
+                {% endif %}
+                <p>Consistently highest density across all time periods.</p>
+            </div>
+            <!--<div class="analytics-card">
+                <h2>Weekend vs Weekday</h2>
+                <p><span style="color: red;">-18.6%</span></p>
+                <p>Weekends show significantly lower crowd density.</p>
+            </div>-->
+        </section>
+
+        <section class="temporal-header" style="margin-top:48px;">
+            <h1>Temporal Analysis</h1>
+            <p class="dashboard-subtext">
+                Monthly trends showing crowd density patterns over the course of the year.
+            </p>
+        </section>
+        <section class="temporal-cards">
+            <!--<div class="temporal-card">
+                <h2>Weekly Density Trend</h2>
+                <div class="temporal-info-row">
+                    <div class="temporal-info-col">
+                        <p>Week 1 - Week 4</p>
+                    </div>
+                    <div class="temporal-info-col">
+                        <p>August (2025)</p>
+                    </div>
+                </div>
+                <img src="{{ url_for('static', filename='images/samplegraph.png') }}" alt="Weekly Trend Graph" class="temporal-graph">
+                <div class="historical-info-col">
+            <p><em>Short Description of the graph above</em></p>
+         </div>
+            </div>-->
+            <div class="temporal-card">
+                <h2>Monthly Density Trend</h2>
+                <div class="temporal-info-row">
+                    <div class="temporal-info-col">
+                        <p>January - December</p>
+                    </div>
+                    <div class="temporal-info-col">
+                        <p>Year 2024</p>
+                    </div>
+                </div>
+                <img src="{{ url_for('static', filename='images/monthly_density_trend.png') }}" alt="Monthly Density Trend Graph" class="temporal-graph">
+                <div class="historical-info-col">
+            <p style="text-align: justify;"><em>Monthly density trend shows various dips and rises throughout the year, most notably lower density rates during the months of March to July which mark the end of educational institutions' academic year and summer break. On the other hand, rises in the density rates can be oberserved from August to February, coinciding with the start of the new academic year only dipping during the holiday months of December and January.</em></p>
+         </div>
+            </div>
+        </section>
+
+        <section class="historical-header" style="margin-top:48px;">
+            <h1>Historical Comparison</h1>
+            <p class="dashboard-subtext">
+                Year-over-year analysis and station performance comparisons.
+            </p>
+        </section>
+        <section class="historical-cards">
+    <div class="historical-card">
+        <h2>Year-over-year Comparison</h2>
+        <div class="historical-info-row">
+            <div class="historical-info-col">
+                <p>Density per year</p>
+            </div>
+            <div class="historical-info-col">
+                <p>2022 vs 2023 vs 2024</p>
+            </div>
+        </div>
+        <img src="{{ url_for('static', filename='images/year_over_year_comparison.png') }}" alt="Historical Comparison Graph" class="historical-graph">
+        <div class="historical-info-col">
+            <p style="text-align: justify;"><em>Year-over-year comparison shows a steady rise in average station density from 2022 through 2024. 2023 records a noticeable increase versus 2022 (Lift in the restriction of Covid-19 Pandemic), and 2024 shows a larger, more widespread increase across multiple stations and time blocks — indicating growing ridership and higher peak congestion.</em></p>
+         </div>
+    </div>
+
+</section>
+
+        <section class="densitydist-header" style="margin-top:48px;">
+            <h1>Density Distribution</h1>
+            <p class="dashboard-subtext">
+                Density distribution from each station and by each hour.
+            </p>
+        </section>
+        <section class="densitydist-cards">
+            <div class="densitydist-card">
+                <h2>Station Distribution</h2>
+                <p>Manila light Rail Transit Line-2</p>
+                <img src="{{ url_for('static', filename='images/station_distribution.png') }}" alt="Station Distribution Graph" class="densitydist-graph">
+                <div class="historical-info-col">
+            <p style="text-align: justify;"><em>Station distribution reveals ridership patterns across the LRT-2 line from Recto to Antipolo. Central stations like Araneta-Cubao and Katipunan typically show higher volumes due to major commercial and educational hubs, while terminal stations (Recto and Antipolo) reflect commuter flow patterns. Daily variations indicate peak travel demands and passenger distribution throughout the transit corridor.</em></p>
+         </div>
+            </div>
+            <div class="densitydist-card">
+                <h2>Daily Peak Hours Pattern</h2>
+                <p>Distribution of crowd density for peak hours of the day.</p>
+                <img src="{{ url_for('static', filename='images/daily_peak_pattern.png') }}" alt="Daily Peak Hours Pattern Graph" class="densitydist-graph">
+                <div class="historical-info-col">
+            <p style="text-align: justify;"><em>Daily peak hours pattern displays the highest density levels reached at each station during today's peak periods. The visualization helps identify congestion hotspots across the LRT-2 corridor, with threshold indicators showing which stations experience low, moderate, high, or critical density levels during their busiest hour of the day.</em></p>
+         </div>
+            </div>
+        </section>
+
+    </div>
+    <footer class="main-footer">
+        <div class="footer-title">CrowdSense</div>
+        <div class="footer-tagline">Smart Predictions, Safer Commutes</div>
+    </footer>
+</body>
+</html>

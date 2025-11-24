@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CrowdSense - Feedback</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <header class="main-header">
+    <a href="{{ url_for('home') }}">
+        <img src="{{ url_for('static', filename='images/crowdsense.png') }}" alt="Logo" class="logo">
+    </a>
+    <span class="site-name">CrowdSense</span>
+    <nav class="header-nav">
+        <a href="{{ url_for('dashboard') }}" class="nav-btn"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="{{ url_for('mapsroutes') }}" class="nav-btn"><i class="fas fa-map"></i> Maps & Routes</a>
+        <a href="{{ url_for('analytics') }}" class="nav-btn"><i class="fas fa-chart-line"></i> Analytics</a>
+        <a href="{{ url_for('feedback') }}" class="nav-btn"><i class="fas fa-comment-dots"></i> Feedback</a>
+    </nav>
+</header>
+    <div class="container dashboard-main">
+        <section class="feedback-header" style="margin-top:32px;">
+            <h1>Feedback</h1>
+            <p class="dashboard-subtext">Share your experience with CrowdSense so that we can better improve the website!</p>
+        </section>
+        <section class="feedback-form-section">
+            <div class="feedback-external">
+                <h2>We value your feedback!</h2>
+                <p>Please share your experience with CrowdSense by filling out our survey.</p>
+                <a href="https://forms.office.com/your-form-link-here" target="_blank" class="nav-btn" style="display: inline-block; text-decoration: none; margin-top: 16px;">
+                    <i class="fas fa-external-link-alt"></i> Open Feedback Form
+                </a>
+                <p style="margin-top: 12px; font-size: 14px; color: #666;">
+                    <em>This will open Microsoft Forms in a new tab!</em>
+                </p>
+            </div>
+        </section>
+        <!--<p>This page is powered by Python + HTML + CSS.</p>
+        <section class="feedback-form-section">
+            <form class="feedback-form" method="post" action="#">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Overall Rating:</label>
+                    <div class="star-rating">
+                        <input type="radio" id="star5" name="rating" value="5"><label for="star5" title="5 stars"><i class="fas fa-star"></i></label>
+                        <input type="radio" id="star4" name="rating" value="4"><label for="star4" title="4 stars"><i class="fas fa-star"></i></label>
+                        <input type="radio" id="star3" name="rating" value="3"><label for="star3" title="3 stars"><i class="fas fa-star"></i></label>
+                        <input type="radio" id="star2" name="rating" value="2"><label for="star2" title="2 stars"><i class="fas fa-star"></i></label>
+                        <input type="radio" id="star1" name="rating" value="1"><label for="star1" title="1 star"><i class="fas fa-star"></i></label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="comments">Comments & Suggestions:</label>
+                    <textarea id="comments" name="comments" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="nav-btn" style="margin-top:12px;">Submit Feedback</button>
+            </form>
+        </section>
+        -->
+        <section class="about-header" style="margin-top:48px;">
+            <h1>About Us</h1>
+            <p class="dashboard-subtext">Meet the developers behind CrowdSense!</p>
+        </section>
+        <section class="about-cards">
+            <div class="about-card">
+                <img src="{{ url_for('static', filename='images/josh.jpg') }}" alt="Developer 1" class="about-photo">
+                <h2>Josh Edgar R. Baquiano</h2>
+                <p class="about-role">Full Stack Developer</p>
+                <p class="about-company">San Beda University - Manila</p>
+                <p class="about-dept">BS Computer Science</p>
+            </div>
+            <div class="about-card">
+                <img src="{{ url_for('static', filename='images/wayne.jpg') }}" alt="Developer 2" class="about-photo">
+                <h2>Wayne Andre B. Bulatao</h2>
+                <p class="about-role">Full Stack Developer</p>
+                <p class="about-company">San Beda University - Manila</p>
+                <p class="about-dept">BS Computer Science</p>
+            </div>
+            <div class="about-card">
+                <img src="{{ url_for('static', filename='images/keanu.jpg') }}" alt="Developer 3" class="about-photo">
+                <h2>Keanu Rick P. Castillo</h2>
+                <p class="about-role">Full Stack Developer</p>
+                <p class="about-company">San Beda University - Manila</p>
+                <p class="about-dept">BS Computer Science</p>
+            </div>
+        </section>
+    </div>
+
+    <footer class="main-footer">
+        <div class="footer-title">CrowdSense</div>
+        <div class="footer-tagline">Smart Predictions, Safer Commutes</div>
+    </footer>
+</body>
+</html>
