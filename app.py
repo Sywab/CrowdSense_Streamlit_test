@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+import streamlit as st
 from werkzeug.utils import secure_filename
 import os
 import pandas as pd
@@ -577,4 +577,5 @@ def admin_upload():
     return redirect(url_for('admin_panel'))
 
 if __name__ == '__main__':
+
     app.run(debug=True)
